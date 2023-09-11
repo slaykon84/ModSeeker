@@ -5,8 +5,7 @@ from tkinter import simpledialog
 
 password = ""
 
-def get_users_for_module(module_name, filename, listb):
-    print(listb.h())
+def get_users_for_module(module_name,listb, filename = "command_output.txt",command = "modinfo"):
     # Initialize a variable to store the number of users
 
     # Open the file and read it line by line
@@ -24,8 +23,22 @@ def get_users_for_module(module_name, filename, listb):
                             # Configure the background color of the matching item to green
                             listb.itemconfig(index, {'bg': 'green'})
                 return f"({len(splited)})  {words[3]} "
+def get_dep(listb,module_name,command = "modinfo"):
+    result = subprocess.run(command + " " + module_name, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    with open("modinf.txt", 'w') as f:
+        f.write(result.stdout)
+    with open("modinf.txt", "r") as file:
+     for line in file:
+        words = line.split()
+        if len(words) == 2 and words[0] == "depends:":
+            depends_on = words[1].split(",")
+            for index in range(listb.size()):
+                for word in depends_on:
+                    if listb.get(index) == word:
+                        # Configure the background color of the matching item to green
+                        listb.itemconfig(index, {'bg': 'red3'})
 
-            
+          
 
 def on_closing(app):
     # Run the command before closing the application

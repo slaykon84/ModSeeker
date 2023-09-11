@@ -29,7 +29,8 @@ def insert_list(event):
         users_text.configure(state="normal")
         users_text.delete("1.0",tk.END)
         #insert users to users text and mark users of the module
-        users_text.insert(tk.END,f"used by: {get_users_for_module(selected_text,flnm,modules_list)}")
+        users_text.insert(tk.END,f"used by: {get_users_for_module(selected_text,modules_list)}")
+        get_dep(modules_list,selected_text)
         users_text.configure(state="disabled")
    
 def update_modules_list():
