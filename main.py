@@ -16,7 +16,6 @@ def insert_list(event):
     for item in range(modules_list.size()):
         modules_list.itemconfig(item,{'bg' : "white"})
     #clear info text    
-    info_text.configure(state="normal")
     info_text.delete("1.0", tk.END)
     #get selected item
     selected_index = modules_list.curselection()
@@ -25,13 +24,10 @@ def insert_list(event):
         selected_text = modules_list.get(selected_index[0])
         #insert modinfo output of the module to info text  
         info_text.insert(tk.END,modinfo(selected_text))
-        info_text.configure(state="disabled")
-        users_text.configure(state="normal")
         users_text.delete("1.0",tk.END)
         #insert users to users text and mark users of the module
         users_text.insert(tk.END,f"used by: {get_users_for_module(selected_text,modules_list)}")
         get_dep(modules_list,selected_text)
-        users_text.configure(state="disabled")
    
 def update_modules_list():
     modules_list.delete(0, tk.END)  # Clear the current items in the list
@@ -84,7 +80,7 @@ modules_list.bind("<<ListboxSelect>>", insert_list)
 
 info_text = tk.Text(window)
 info_text.grid(row=0,column=2,padx=5,sticky="N", rowspan=20)
-info_text.configure(state="disabled")
+
 
 users_text = tk.Text(window,width=30,height=2)
 users_text.grid(row=21, column=1, padx=5, pady=0, columnspan=2, rowspan=4, sticky='WE')
