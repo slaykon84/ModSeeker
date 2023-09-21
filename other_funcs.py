@@ -33,9 +33,8 @@ def get_modules_from_lib(window,widget, widget2, command="""find /lib/modules/$(
             for line in file:
                 line = line.split()[0] #get rid of \n or something like that
                 for i in range(widget2.size()):
-                    if line == widget2.get(i):
+                    if line == widget2.get(i).replace("-", "_"):
                         widget.tag_configure("g_tag", background="green")
-                        widget2.itemconfig(i, {'bg': 'green'})
                         widget.insert(tk.END, line+"\n", "g_tag")
                 widget.insert(tk.END,line+"\n")
                
@@ -51,9 +50,8 @@ def get_modules_from_lib(window,widget, widget2, command="""find /lib/modules/$(
         widget.delete("1.0", tk.END)
         for word in result:
             for i in range(widget2.size()):
-                if word == widget2.get(i):
+                if word.replace("-", "_") == widget2.get(i):
                     widget.tag_configure("g_tag", background="green")
-                    widget2.itemconfig(i, {'bg': 'green'})
                     widget.insert(tk.END, word+"\n", "g_tag")
             widget.insert(tk.END,word+"\n")
 
@@ -63,7 +61,7 @@ def get_users_for_module(module_name,listb, filename = "command_output.txt",comm
     # Open the file and read it line by line
     with open(filename, 'r') as file:
         for line in file:
-            # Split the line into words using spaces as separators
+            # Split the line against words using spaces as separators
             words = line.split()
 
             # Check if the line contains at least 4 words and the module name matches
