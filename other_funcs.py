@@ -7,17 +7,13 @@ import time as tm
 
 password = ""
 
-
-
 #get all modules on the computer 
 #note that due to updates, modules stored in the computer might get deleted/renamed or new modules can be added. so, that makes the else statement impractical
-
 def get_modules_from_lib(window,widget, widget2, command="""find /lib/modules/$(uname -r)/ -type f -name "*.ko" | xargs -I {} basename {}"""):
     #list used in else statement
     result = []
     #working directory location
     pwd = subprocess.run("pwd", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True).stdout.split()[0]+ "/"
-    print(pwd)
     #if the file isnt there(because command takes time to complete)
     if ph.exists(pwd + "allmods.txt") == False:
         result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True).stdout.splitlines()
@@ -31,12 +27,11 @@ def get_modules_from_lib(window,widget, widget2, command="""find /lib/modules/$(
         with open("allmods.txt","r") as file:
             widget.delete("1.0", tk.END) 
             for line in file:
-                line = line.split()[0] #get rid of \n or something like that
-                for i in range(widget2.size()):
-                    if line == widget2.get(i).replace("-", "_"):
-                        widget.tag_configure("g_tag", background="green")
-                        widget.insert(tk.END, line+"\n", "g_tag")
-                widget.insert(tk.END,line+"\n")
+                line = line.split()[0]  # get rid of \n or something like that
+                green = any(line.replace("-", "_") == widget2.get(i) for i in range(widget2.size()))
+                if green:
+                    widget.tag_configure("g_tag", background="green")
+                widget.insert(tk.END, line + "\n", "g_tag" if green else "")
                
     #if its there
     else:
@@ -49,15 +44,14 @@ def get_modules_from_lib(window,widget, widget2, command="""find /lib/modules/$(
         #put each item in result list to info text and mark green if its already in use
         widget.delete("1.0", tk.END)
         for word in result:
-            for i in range(widget2.size()):
-                if word.replace("-", "_") == widget2.get(i):
+                green = any(word.replace("-", "_") == widget2.get(i) for i in range(widget2.size()))
+                if green:
                     widget.tag_configure("g_tag", background="green")
-                    widget.insert(tk.END, word+"\n", "g_tag")
-            widget.insert(tk.END,word+"\n")
+                widget.insert(tk.END, word + "\n", "g_tag" if green else "")
+                
 
 def get_users_for_module(module_name,listb, filename = "command_output.txt",command = "modinfo"):
     # Initialize a variable to store the number of users
-
     # Open the file and read it line by line
     with open(filename, 'r') as file:
         for line in file:
@@ -138,36 +132,16 @@ def read_modname(filename):
     gathered_words = []
     
     with open(filename, 'r') as file:
-        while True:
-            line = file.readline()
-            if not line:
-                break
-            columns = line.strip().split('\t')
-            
-            for column in columns:
-                word = ""
-                for char in column:
-                    if char.isspace() or char == '':
-                        if word:
-                            gathered_words.append(word)
-                        break
-                    word += char
-                else:
-                    if word:
-                        gathered_words.append(word)
-    return gathered_words                   
-
+        for line in file:
+            gathered_words.append(line.split()[0])
+    return gathered_words     
+                  
 def remove_and_shift_columns(filename, column_index = 1):
     lines = []
     
-    with open(filename, 'r') as file:
+    with open(filename,"r") as file:
         for line in file:
-            columns = line.strip().split('\t')
-            if column_index < len(columns):
-                del columns[column_index]
-            new_line = '\t'.join(columns)
-            lines.append(new_line)
-    
-    with open(filename, 'w') as file:
-        for line in lines[1:]:
-            file.write(line + '\n')
+            lines.append(line)
+    with open(filename,"w") as file:   
+        for i in lines[1:]:
+            file.write(i)   

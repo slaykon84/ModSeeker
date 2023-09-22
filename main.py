@@ -4,7 +4,6 @@ from tkinter import messagebox
 from tkinter import simpledialog
 
 flnm = 'command_output.txt'  
-
 #functions that needs to be in this file in order to prevent some confusion
 
 #insert selected module's information into info text widget
@@ -34,7 +33,7 @@ def update_modules_list():
     modules_list.delete(0, tk.END)  # Clear the current items in the list
     get_modules()
     words = read_modname(flnm)  # Get the updated list of modules
-    insert_w(words)  # Insert the updated list into the listbox
+    insert_w()  # Insert the updated list into the listbox
 
 
 def unins():
@@ -92,7 +91,6 @@ rmmod_bt = tk.Button(window,text="Uninsert",command=unins,width=4)
 rmmod_bt.grid(row=0,column=0,padx=5,sticky="N")
 admod_bt = tk.Button(window,text="Insert",command=insrt,width=4)
 admod_bt.grid(row=1,column=0,padx=5,sticky="N")
-admod_bt1 = tk.Button(window,text="Insert",command=insrt,width=4)
 intelliadd = tk.Button(window, text="L. All", command=lambda: get_modules_from_lib(window,info_text,modules_list), width=4)
 intelliadd.grid(row=2,column=0,padx=5,sticky="N")
 
