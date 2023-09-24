@@ -3,55 +3,72 @@ import tkinter as tk
 from tkinter import messagebox
 from tkinter import simpledialog
 import os.path as ph
-import time as tm
+
 
 password = ""
-
+islistingall = False
 #get all modules on the computer 
 #note that due to updates, modules stored in the computer might get deleted/renamed or new modules can be added. so, that makes the else statement impractical
 def get_modules_from_lib(window,widget, widget2, command="""find /lib/modules/$(uname -r)/ -type f -name "*.ko" | xargs -I {} basename {}"""):
-    #list used in else statement
+    global islistingall 
     result = []
-    #working directory location
-    pwd = subprocess.run("pwd", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True).stdout.split()[0]+ "/"
-    #if the file isnt there(because command takes time to complete)
-    if ph.exists(pwd + "allmods.txt") == False:
-        result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True).stdout.splitlines()
-        result = sorted(result)
-        #write output to file without their ".ko" part
-        with open("allmods.txt","w") as file:
-            for i in result:
-                word = f"{i.rstrip('.ko')}\n"
-                file.write(word)
-        #read from file line by line and put them to info text and mark green if its already in use
-        with open("allmods.txt","r") as file:
-            widget.delete("1.0", tk.END) 
-            for line in file:
-                line = line.split()[0]  # get rid of \n or something like that
-                green = any(line.replace("-", "_") == widget2.get(i) for i in range(widget2.size()))
-                if green:
-                    widget.tag_configure("g_tag", background="green")
-                widget.insert(tk.END, line + "\n", "g_tag" if green else "")
-               
-    #if its there
-    else:
-        #read line by line and append to result list
-        with open("allmods.txt","r") as file:
-            for line in file:
-              result.append(line.split()[0]) #get rid of \n or something like that
- 
+    modules_in_use = []
+    if islistingall == False:
+        #list used in else statement
+        #working directory location
+        pwd = subprocess.run("pwd", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True).stdout.split()[0]+ "/"
+        #if the file isnt there(because command takes time to complete)
+        if ph.exists(pwd + "allmods.txt") == False:
+            result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True).stdout.splitlines()
+            result = sorted(result)
+            #write output to file without their ".ko" part
+            with open("allmods.txt","w") as file:
+                for i in result:
+                    word = f"{i.rstrip('.ko')}\n"
+                    file.write(word)
 
-        #put each item in result list to info text and mark green if its already in use
-        widget.delete("1.0", tk.END)
-        for word in result:
-                green = any(word.replace("-", "_") == widget2.get(i) for i in range(widget2.size()))
+            #store names of modules that are currently in use
+            for i in range(widget2.size()):
+                modules_in_use.append(widget2.get(i)) 
+
+            widget2.delete(0, tk.END)
+            for word in result:
+                word = f"{word.rstrip('.ko').split()[0]}"
+                green_flags = [word.replace("-", "_") == module for module in modules_in_use]
+                green = any(green_flags)
                 if green:
-                    widget.tag_configure("g_tag", background="green")
-                widget.insert(tk.END, word + "\n", "g_tag" if green else "")
+                    widget2.insert(tk.END, word)
+                    widget2.itemconfig(tk.END,{'fg':'red'})
+                else:
+                    widget2.insert(tk.END, word)
+            islistingall = True
                 
+        #if its there
+        else:
+            #read line by line and append to result list
+            with open("allmods.txt","r") as file:
+                for line in file:
+                   result.append(line.split()[0]) #get rid of \n or something like that
+            #store names of modules that are currently in use
+            for i in range(widget2.size()):
+                modules_in_use.append(widget2.get(i))
+            #put each item in result list to modules list and mark green if its already in use
+            widget2.delete(0, tk.END)
+            for word in result:
+                green_flags = [word.replace("-", "_") == module for module in modules_in_use]
+                green = any(green_flags)
+                if green:
+                    widget2.insert(tk.END, word)
+                    widget2.itemconfig(tk.END,{'fg':'red'})
+                else:
+                    widget2.insert(tk.END, word)
+            islistingall = True   
+                
+def res():
+     global islistingall 
+     islistingall = False 
 
-def get_users_for_module(module_name,listb, filename = "command_output.txt",command = "modinfo"):
-    # Initialize a variable to store the number of users
+def get_users_for_module(module_name,listb, filename = "command_output.txt",command = "modinfo",filename2="modinf.txt"):
     # Open the file and read it line by line
     with open(filename, 'r') as file:
         for line in file:
@@ -65,8 +82,12 @@ def get_users_for_module(module_name,listb, filename = "command_output.txt",comm
                     for word in splited:
                         if listb.get(index) == word:
                             # Configure the background color of the matching item to green
-                            listb.itemconfig(index, {'bg': 'green'})
-                return f"({len(splited)})  {words[3]} "
+                            listb.itemconfig(index, {'bg': 'green'})                       
+                return f"Used by: ({len(splited)})  {words[3]} "
+    return "Used by: None "               
+
+
+    
 def get_dep(listb,module_name,command = "modinfo"):
     result = subprocess.run(command + " " + module_name, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     with open("modinf.txt", 'w') as f:
@@ -81,8 +102,10 @@ def get_dep(listb,module_name,command = "modinfo"):
                     if listb.get(index) == word:
                         # Configure the background color of the matching item to green
                         listb.itemconfig(index, {'bg': 'red3'})
+            return f"Depends: ({len(depends_on)}) {words[1]}"            
+    return "Depends: None"              
 
-def on_closing(app):
+def on_closing():
     # Run the command before closing the application
     subprocess.run(["sudo", "-k"])
     #app.destroy()
