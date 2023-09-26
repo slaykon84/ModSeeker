@@ -9,7 +9,7 @@ password = ""
 islistingall = False
 #get all modules on the computer 
 #note that due to updates, modules stored in the computer might get deleted/renamed or new modules can be added. so, that makes the else statement impractical
-def get_modules_from_lib(window,widget, widget2, command="""find /lib/modules/$(uname -r)/ -type f -name "*.ko" | xargs -I {} basename {}"""):
+def get_modules_from_lib(widget2, command="""find /lib/modules/$(uname -r)/ -type f -name "*.ko" | xargs -I {} basename {}"""):
     global islistingall 
     result = []
     modules_in_use = []
