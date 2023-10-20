@@ -68,7 +68,8 @@ def res():
      global islistingall 
      islistingall = False 
 
-def get_users_for_module(module_name,listb, filename = "command_output.txt",command = "modinfo",filename2="modinf.txt"):
+#both returns users of selected module to users_text and marks matched items in the  listbox
+def get_users_for_module(module_name,listb, filename = "command_output.txt"):
     # Open the file and read it line by line
     with open(filename, 'r') as file:
         for line in file:
@@ -82,13 +83,15 @@ def get_users_for_module(module_name,listb, filename = "command_output.txt",comm
                     for word in splited:
                         if listb.get(index) == word:
                             # Configure the background color of the matching item to green
-                            listb.itemconfig(index, {'bg': 'green'})                       
+                            listb.itemconfig(index, {'bg': 'green'})    
+                #return number of users and users of it                              
                 return f"Used by: ({len(splited)})  {words[3]} "
     return "Used by: None "               
 
 
-    
+#both returns depencies of selected module to users_text and marks matched items in the  listbox    
 def get_dep(listb,module_name,command = "modinfo"):
+    #both returns depencies and inserts the module's info
     result = subprocess.run(command + " " + module_name, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     with open("modinf.txt", 'w') as f:
         f.write(result.stdout)
@@ -102,6 +105,7 @@ def get_dep(listb,module_name,command = "modinfo"):
                     if listb.get(index) == word:
                         # Configure the background color of the matching item to green
                         listb.itemconfig(index, {'bg': 'red3'})
+            #return number of depencies and depencies of it 
             return f"Depends: ({len(depends_on)}) {words[1]}"            
     return "Depends: None"              
 
@@ -128,14 +132,28 @@ def rmmod(mod_name,passwd):
     return True
 
 def modprobe(mod_name,passwd):
-    command = f"sudo -S modprobe {mod_name}"
+    mod_name1 = ""
+    for item in mod_name:
+        mod_name1 += item +" "
+    mod_name = str(mod_name)
+    command = f"sudo -S modprobe {mod_name}"    
+    print(mod_name1)
+    print(command)    
     result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, input=passwd)
     if result.returncode != 0:
         messagebox.showerror("Error", result.stderr)
         return False
     else:
-        messagebox.showinfo("Info",f"{mod_name} was succesfully inserted.")
+        messagebox.showinfo("Info",f"{mod_name1} was succesfully inserted.")
         return True
+def getsize(selected_text,flnm="command_output.txt"):
+    with open(flnm,'r') as file:
+        for line in file:
+            words = line.split()
+            if words[0] == selected_text:
+                bytes = int(words[1])
+                megabytes = round(bytes / (1024* 1024),1)
+                return megabytes 
 
 def modinfo(mod_name):
     command = f"modinfo {mod_name}"

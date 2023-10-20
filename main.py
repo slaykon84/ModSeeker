@@ -19,7 +19,8 @@ def insert_list(event):
         if selected_index:
             #convert to text
             selected_text = modules_list.get(selected_index[0])
-            #insert modinfo output of the module to info text  
+            #insert modinfo output of the module to info text 
+            info_text.insert(tk.END,"Size: " + str(getsize(selected_text)) + "MB \n\n") 
             info_text.insert(tk.END,modinfo(selected_text))
             users_text.configure(state="normal")
             users_text.delete("1.0",tk.END)
@@ -41,10 +42,10 @@ def unins():
             messagebox.showinfo("Info",f"{selected_text} was succesfuly uninserted.")
 
 def insrt():
-     manuel_mod_name = simpledialog.askstring("Manualy Insert","Enter an module name. Modules are often stored in /lib/modules/(your kernel version)/(file ending with .ko)")
+     manuel_mod_name = simpledialog.askstring("Manualy Insert","Enter an module name(s). Use space when inserting multiple.\nModules are often stored in /lib/modules/(your kernel version)/(file ending with .ko)").split()
      if manuel_mod_name:
       if modprobe(manuel_mod_name,password):
-          insert_w()
+          insert_w()     
 
 def insert_w():
     modules_list.delete(0, tk.END)
@@ -91,7 +92,7 @@ rmmod_bt = tk.Button(window,text="Uninsert",command=unins,width=4)
 rmmod_bt.grid(row=0,column=0,padx=5,sticky="N")
 admod_bt = tk.Button(window,text="Insert",command=insrt,width=4)
 admod_bt.grid(row=1,column=0,padx=5,sticky="N")
-lall = tk.Button(window, text="L. All", command=lambda: get_modules_from_lib(modules_list), width=4)
+lall = tk.Button(window, text="L. All", command=lambda:get_modules_from_lib(modules_list), width=4)
 lall.grid(row=2,column=0,padx=5,sticky="N")
 rs = tk.Button(window,text="Reset List",width=5,command=reset)
 rs.grid(row=21,column=0,padx=5)
