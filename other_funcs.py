@@ -6,10 +6,11 @@ import os.path as ph
 
 
 password = ""
+comprl = [".zts",".bz2",".gz",".xz","","",""]
 islistingall = False
 #get all modules on the computer 
 #note that due to updates, modules stored in the computer might get deleted/renamed or new modules can be added. so, that makes the else statement impractical
-def get_modules_from_lib(widget2, command="""find /lib/modules/$(uname -r)/ -type f -name "*.ko" | xargs -I {} basename {}"""):
+def get_modules_from_lib(widget2, command="""find /lib/modules/$(uname -r)/ -type f -name "*.ko*" | xargs -I {} basename {}"""):
     global islistingall 
     result = []
     modules_in_use = []
@@ -24,7 +25,7 @@ def get_modules_from_lib(widget2, command="""find /lib/modules/$(uname -r)/ -typ
             #write output to file without their ".ko" part
             with open("allmods.txt","w") as file:
                 for i in result:
-                    word = f"{i.rstrip('.ko')}\n"
+                    word = i.split(".")[0]+"\n"
                     file.write(word)
 
             #store names of modules that are currently in use
@@ -32,38 +33,37 @@ def get_modules_from_lib(widget2, command="""find /lib/modules/$(uname -r)/ -typ
                 modules_in_use.append(widget2.get(i)) 
 
             widget2.delete(0, tk.END)
-            for word in result:
-                word = f"{word.rstrip('.ko').split()[0]}"
-                green_flags = [word.replace("-", "_") == module for module in modules_in_use]
+            with open("allmods.txt","r") as file:
+             for line in file:
+                line = line.split()[0]
+                green_flags = [line == module for module in modules_in_use]
                 green = any(green_flags)
                 if green:
-                    widget2.insert(tk.END, word)
+                    widget2.insert(tk.END, line)
                     widget2.itemconfig(tk.END,{'fg':'red'})
                 else:
-                    widget2.insert(tk.END, word)
+                    widget2.insert(tk.END, line)
             islistingall = True
                 
         #if its there
         else:
-            #read line by line and append to result list
-            with open("allmods.txt","r") as file:
-                for line in file:
-                   result.append(line.split()[0]) #get rid of \n or something like that
             #store names of modules that are currently in use
             for i in range(widget2.size()):
                 modules_in_use.append(widget2.get(i))
-            #put each item in result list to modules list and mark green if its already in use
+            #read line by line and append to result list and mark
             widget2.delete(0, tk.END)
-            for word in result:
-                green_flags = [word.replace("-", "_") == module for module in modules_in_use]
+            with open("allmods.txt","r") as file:
+             for line in file:
+                line = line.split()[0]
+                green_flags = [line == module for module in modules_in_use]
                 green = any(green_flags)
                 if green:
-                    widget2.insert(tk.END, word)
+                    widget2.insert(tk.END, line)
                     widget2.itemconfig(tk.END,{'fg':'red'})
                 else:
-                    widget2.insert(tk.END, word)
+                    widget2.insert(tk.END, line)
             islistingall = True   
-                
+) 
 def res():
      global islistingall 
      islistingall = False 
