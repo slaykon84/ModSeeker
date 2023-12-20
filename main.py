@@ -1,6 +1,7 @@
 from other_funcs import *
 import tkinter as tk
 from tkinter import messagebox,simpledialog
+from ttkthemes import *
 
 flnm = 'command_output.txt'  
 #functions that needs to be in this file in order to prevent some confusion
@@ -44,17 +45,19 @@ def unins():
             insert_w()                  
             messagebox.showinfo("Info",f"{selected_text} was succesfuly uninserted.")
 def unins_m():
-    manuel_mods_name = simpledialog.askstring("Manualy Uninsert","Enter an module name or  multiple module names to uninsert, use space when entering multiple")
+    manuel_mods_name = simpledialog.askstring("Manualy Uninsert","Enter a module name or  multiple module names to uninsert, use comma.\n ")
     if manuel_mods_name:
-        if rmmod(manuel_mods_name,password):
-            if len(manuel_mods_name.split()) > 1:                  
+        if len(manuel_mods_name.split(",")) > 1:
+            if rmmod(list_to_spaced(manuel_mods_name.split(",")),password):
                 messagebox.showinfo("Info",f"{manuel_mods_name} were succesfuly uninserted.")
-            else:
+        else:
+            if rmmod(manuel_mods_name,password):
                 messagebox.showinfo("Info",f"{manuel_mods_name} was succesfuly uninserted.")
+        reset()
 
 
 def insrt():
-     manuel_mod_name = simpledialog.askstring("Manualy Insert","Enter an module name(s). Use space when inserting multiple.\nModules are often stored in /lib/modules/(your kernel version)/(file ending with .ko)")
+     manuel_mod_name = simpledialog.askstring("Manualy Insert","Enter a module name(s). Use space when inserting multiple.\nModules are often stored in /lib/modules/(your kernel version)/(file ending with .ko)")
      if manuel_mod_name:
       if modprobe(manuel_mod_name,password):
           insert_w()

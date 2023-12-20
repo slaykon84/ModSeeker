@@ -8,6 +8,14 @@ import os.path as ph
 password = ""
 comprl = [".zts",".bz2",".gz",".xz","","",""]
 islistingall = False
+
+def list_to_spaced(list):
+    a = ""
+    for i in list:
+        a += i +" "
+    return a
+
+
 #get all modules on the computer 
 #note that due to updates, modules stored in the computer might get deleted/renamed or new modules can be added. so, that makes the else statement impractical
 def get_modules_from_lib(widget2, command="""find /lib/modules/$(uname -r)/ -type f -name "*.ko*" | xargs -I {} basename {}"""):
@@ -63,7 +71,7 @@ def get_modules_from_lib(widget2, command="""find /lib/modules/$(uname -r)/ -typ
                 else:
                     widget2.insert(tk.END, line)
             islistingall = True   
-) 
+
 def res():
      global islistingall 
      islistingall = False 
@@ -132,19 +140,18 @@ def rmmod(mod_name,passwd):
     return True
 
 def modprobe(mod_name,passwd):
-    mod_name1 = ""
-    for item in mod_name:
-        mod_name1 += item +" "
-    mod_name = str(mod_name)
     command = f"sudo -S modprobe {mod_name}"    
-    print(mod_name1)
+    print(mod_name)
     print(command)    
     result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, input=passwd)
     if result.returncode != 0:
         messagebox.showerror("Error", result.stderr)
         return False
     else:
-        messagebox.showinfo("Info",f"{mod_name1} was succesfully inserted.")
+        if len(mod_name.split()) > 1:
+            messagebox.showinfo("Info",f"{mod_name} were succesfully inserted.")
+        else:
+            messagebox.showinfo("Info",f"{mod_name} was succesfully inserted.")
         return True
 def getsize(selected_text,flnm="command_output.txt"):
     with open(flnm,'r') as file:
