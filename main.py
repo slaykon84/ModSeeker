@@ -9,15 +9,13 @@ flnm = 'command_output.txt'
 #insert selected module's information into info text widget
 #does insertation of module info and markment of users of selected module
 def insert_list(event):
-     if event.widget == modules_list:
-        #clear selection before
-        for item in range(modules_list.size()):
-            modules_list.itemconfig(item,{'bg' : "white"})
-        #clear info text    
-        info_text.delete("1.0", tk.END)
-        #get selected item
         selected_index = modules_list.curselection()
         if selected_index:
+            #clear selection before
+            for item in range(modules_list.size()):
+                modules_list.itemconfig(item,{'bg' : "white"})   
+            info_text.delete("1.0", tk.END)
+            #get selected item
             #convert to text
             selected_text = modules_list.get(selected_index[0])
             #insert modinfo output of the module to info text 
@@ -25,13 +23,13 @@ def insert_list(event):
             info_text.insert(tk.END,modinfo(selected_text))
             users_text.delete("1.0",tk.END)
             #insert users to users text and mark users of the module
-         
+
             users_text.tag_configure("g_tag", background="green")
             users_text.tag_configure("r_tag", background="red3")
             users_text.insert(tk.END,get_users_for_module(selected_text,modules_list),"g_tag")
             users_text.insert(tk.END,"  |||  ")
             users_text.insert(tk.END,get_dep(modules_list,selected_text),"r_tag")
-
+            modules_list.selection_clear(0,"end")
 def insselc():
     selected_index = modules_list.curselection()
     selected_text = modules_list.get(selected_index[0])
