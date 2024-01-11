@@ -9,6 +9,8 @@ password = ""
 comprl = [".zts",".bz2",".gz",".xz","","",""]
 islistingall = False
 
+def important():
+    messagebox.showwarning("Important","If you don't have any idea about what you are doing, LEAVE the app.")
 def list_to_spaced(list):
     a = ""
     for i in list:

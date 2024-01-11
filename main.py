@@ -1,7 +1,7 @@
 from other_funcs import *
 import tkinter as tk
 from tkinter import messagebox,simpledialog
-from ttkthemes import *
+
 
 flnm = 'command_output.txt'  
 #functions that needs to be in this file in order to prevent some confusion
@@ -13,7 +13,8 @@ def insert_list(event):
         if selected_index:
             #clear selection before
             for item in range(modules_list.size()):
-                modules_list.itemconfig(item,{'bg' : "white"})   
+                modules_list.itemconfig(item,{'bg' : "white"})
+                modules_list.itemconfig(selected_index,{'bg':'grey70'})   
             info_text.delete("1.0", tk.END)
             #get selected item
             #convert to text
@@ -29,21 +30,26 @@ def insert_list(event):
             users_text.insert(tk.END,get_users_for_module(selected_text,modules_list),"g_tag")
             users_text.insert(tk.END,"  |||  ")
             users_text.insert(tk.END,get_dep(modules_list,selected_text),"r_tag")
-            modules_list.selection_clear(0,"end")
+
 def insselc():
     selected_index = modules_list.curselection()
     selected_text = modules_list.get(selected_index[0])
     modprobe(selected_text,password)            
 
 def unins():
+    print("a")
     selected_index = modules_list.curselection()
+    print(selected_index)
+    print("a2")
     if selected_index:
+        print("a3")
         selected_text = modules_list.get(selected_index[0])  
         if rmmod(selected_text,password):
             insert_w()                  
             messagebox.showinfo("Info",f"{selected_text} was succesfuly uninserted.")
 def unins_m():
     manuel_mods_name = simpledialog.askstring("Manualy Uninsert","Enter a module name or  multiple module names to uninsert, use comma.\n ")
+
     if manuel_mods_name:
         if len(manuel_mods_name.split(",")) > 1:
             if rmmod(list_to_spaced(manuel_mods_name.split(",")),password):
@@ -76,6 +82,7 @@ def reset():
 
 
 #get root acces by asking password  (if your user is not in sudo/sudoers group, it will not work)
+important()
 password = get_password()
 
 
@@ -92,11 +99,11 @@ modules_list.bind("<<ListboxSelect>>", insert_list)
 
 
 info_text = tk.Text(window)
-info_text.grid(row=0,column=2,padx=5,sticky="N", rowspan=20)
+info_text.grid(row=0,column=2,padx=5,sticky="NS", rowspan=20)
 
 
 users_text = tk.Text(window,width=30,height=2)
-users_text.grid(row=21, column=1, padx=5, pady=0, columnspan=2, rowspan=1, sticky='WE')
+users_text.grid(row=21, column=1, padx=5, pady=0, columnspan=2,  sticky='WE')
 
 
 #insert list into listbox (had to put it in here because modules list was non-existent before)
@@ -106,7 +113,7 @@ rmmod_bt = tk.Button(window,text="Uninsert",command=unins,width=5)
 rmmod_bt.grid(row=0,column=0,padx=5,sticky="N")
 admod_bt = tk.Button(window,text="Insert",command=insrt,width=5)
 admod_bt.grid(row=1,column=0,padx=5,sticky="N")
-lall = tk.Button(window, text="List All", command=lambda:get_modules_from_lib(modules_list), width=5)
+lall = tk.Button(window, text="List All", command=lambda:get_modules_from_lib(modules_list,info_text), width=5)
 lall.grid(row=2,column=0,padx=5,sticky="N")
 inssel_b = tk.Button(window,text="Insert S.",width=5,command=insselc)
 inssel_b.grid(row=3,column=0,sticky="N")
