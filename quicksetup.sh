@@ -25,7 +25,7 @@ if [ "$1" = "install" ]; then
             echo "Error: Unable to move modseeker to /usr/bin. Installation failed."
             exit 1
         fi
-    ficp
+    fi
 
 elif [ "$1" = "remove" ]; then
     cd "$HOME"
