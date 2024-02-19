@@ -42,7 +42,7 @@ Or you may prefer installing it to your system:
 $ git clone https://github.com/slaykon84/ModSeeker
 $ cd ModSeeker
 $ ./quicksetup.sh
-cd ..
+$ cd ..
 ```
 Now you can start program by typing:
 ```sh
