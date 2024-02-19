@@ -1,6 +1,6 @@
-from other_funcs import *
 import tkinter as tk
 from tkinter import messagebox,simpledialog
+from other_funcs import *
 
 
 flnm = 'command_output.txt'  
@@ -37,12 +37,9 @@ def insselc():
     modprobe(selected_text,password)            
 
 def unins():
-    print("a")
     selected_index = modules_list.curselection()
     print(selected_index)
-    print("a2")
     if selected_index:
-        print("a3")
         selected_text = modules_list.get(selected_index[0])  
         if rmmod(selected_text,password):
             insert_w()                  
@@ -82,7 +79,7 @@ def reset():
 
 
 #get root acces by asking password  (if your user is not in sudo/sudoers group, it will not work)
-important()
+#important()
 password = get_password()
 
 
@@ -109,11 +106,11 @@ users_text.grid(row=21, column=1, padx=5, pady=0, columnspan=2,  sticky='WE')
 #insert list into listbox (had to put it in here because modules list was non-existent before)
 insert_w()
 
-rmmod_bt = tk.Button(window,text="Uninsert",command=unins,width=5)
+rmmod_bt = tk.Button(window,text="Uninert",command=unins,width=5)
 rmmod_bt.grid(row=0,column=0,padx=5,sticky="N")
 admod_bt = tk.Button(window,text="Insert",command=insrt,width=5)
 admod_bt.grid(row=1,column=0,padx=5,sticky="N")
-lall = tk.Button(window, text="List All", command=lambda:get_modules_from_lib(modules_list,info_text), width=5)
+lall = tk.Button(window, text="List All", command=lambda: get_modules_from_lib(modules_list), width=5)
 lall.grid(row=2,column=0,padx=5,sticky="N")
 inssel_b = tk.Button(window,text="Insert S.",width=5,command=insselc)
 inssel_b.grid(row=3,column=0,sticky="N")
