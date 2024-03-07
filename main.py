@@ -12,9 +12,9 @@ def insert_list(event):
         selected_index = modules_list.curselection()
         if selected_index:
             #clear selection before
-            for item in range(modules_list.size()):
-                modules_list.itemconfig(item,{'bg' : "white"})
-                modules_list.itemconfig(selected_index,{'bg':'grey70'})   
+            #for item in range(modules_list.size()):
+               # modules_list.itemconfig(item,{'bg' : "white"})
+              #  modules_list.itemconfig(selected_index,{'bg':'grey70'})   
             info_text.delete("1.0", tk.END)
             #get selected item
             #convert to text
@@ -106,7 +106,7 @@ users_text.grid(row=21, column=1, padx=5, pady=0, columnspan=2,  sticky='WE')
 #insert list into listbox (had to put it in here because modules list was non-existent before)
 insert_w()
 
-rmmod_bt = tk.Button(window,text="Uninert",command=unins,width=5)
+rmmod_bt = tk.Button(window,text="Uninsert",command=unins,width=5)
 rmmod_bt.grid(row=0,column=0,padx=5,sticky="N")
 admod_bt = tk.Button(window,text="Insert",command=insrt,width=5)
 admod_bt.grid(row=1,column=0,padx=5,sticky="N")
@@ -116,6 +116,8 @@ inssel_b = tk.Button(window,text="Insert S.",width=5,command=insselc)
 inssel_b.grid(row=3,column=0,sticky="N")
 unins_mb = tk.Button(window,text="M. Unins.", width=5,command=unins_m)
 unins_mb.grid(row=4,column=0,sticky="N")
+bl_bt=tk.Button(window,text="B. list",command=lambda: cat_blacklist(info_text,modules_list),width=5)
+bl_bt.grid(row=5,column=0,sticky="N")
 rs = tk.Button(window,text="Reset List",width=5,command=reset)
 rs.grid(row=21,column=0,padx=5)
 

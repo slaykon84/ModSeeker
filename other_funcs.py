@@ -8,15 +8,34 @@ import os.path as ph
 password = ""
 #comprl = [".zts",".bz2",".gz",".xz","","",""]
 islistingall = False
-
-def important():
-    messagebox.showwarning("Important","If you don't have any idea about what you are doing, LEAVE the app.")
 def list_to_spaced(list):
     a = ""
     for i in list:
-        a += i +" "
+        a += i + " "
+    print(a)
     return a
 
+def cat_blacklist(widget,widget2):
+    
+    bl_file = subprocess.run("cat /etc/modprobe.d/blacklist.conf",shell=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True).stdout
+    widget.delete("1.0", tk.END)
+    widget.insert(tk.END,"#To blacklist specific modules edit /etc/modprobe.d/blacklist.conf\n#for details, refer to: man 5 modprobe.d\n")
+    widget.insert(tk.END,bl_file)
+    bl_list =bl_file.splitlines()
+    bl_list_formatted = []
+    for i in bl_list:
+        if i != "" and i.split()[0] != "#":
+            bl_list_formatted.append(i.split()[1])
+    widget2.delete(0,tk.END)
+    for i in bl_list_formatted:
+        widget2.insert(tk.END,i)
+    for i in range(widget2.size()):
+        widget2.itemconfig(i,foreground="white", background="black")
+                       
+
+
+def important():
+    messagebox.showwarning("Important","If you don't have any idea about what you are doing, LEAVE the app.")
 
 #get all modules on the computer 
 #note that due to updates, modules stored in the computer might get deleted/renamed or new modules can be added. so, that makes the else statement impractical
