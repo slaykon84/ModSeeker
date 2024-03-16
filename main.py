@@ -4,16 +4,13 @@ from other_funcs import *
 
 
 flnm = 'command_output.txt'  
-#functions that needs to be in this file in order to prevent some confusion
-
-#insert selected module's information into info text widget
 #does insertation of module info and markment of users of selected module
 def insert_list(event):
         selected_index = modules_list.curselection()
         if selected_index:
             #clear selection before
-            #for item in range(modules_list.size()):
-               # modules_list.itemconfig(item,{'bg' : "white"})
+            for item in range(modules_list.size()):
+                modules_list.itemconfig(item,{'bg' : "white"})
               #  modules_list.itemconfig(selected_index,{'bg':'grey70'})   
             info_text.delete("1.0", tk.END)
             #get selected item
